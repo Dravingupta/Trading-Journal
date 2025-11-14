@@ -20,7 +20,7 @@ app.use(express.urlencoded({ extended: true }));
 // Allow React app (Vite/CRA) to talk to Express API
 app.use(
   cors({
-    origin: "http://localhost:3000",
+    origin: "https://trading-journal-swart-six.vercel.app",
   })
 );
 
