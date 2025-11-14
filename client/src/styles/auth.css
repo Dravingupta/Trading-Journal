@@ -1,0 +1,100 @@
+/* ========= Auth Pages (Login / Signup) ========= */
+
+.auth-header {
+  background: #fff;
+  padding: 15px 20px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  margin: 20px auto 10px;
+  border-radius: 10px;
+  text-align: center;
+  max-width: 900px;
+}
+
+.auth-header-inner h1 {
+  margin: 0;
+  font-size: 26px;
+  color: #6d4c41;
+}
+
+.auth-header-inner .header-subtext {
+  margin-top: 4px;
+  font-size: 14px;
+  color: #8d6e63;
+}
+
+/* Centered layout for login/signup */
+
+.auth-layout {
+  min-height: calc(100vh - 220px); /* space for header + footer */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px 16px;
+}
+
+.auth-card {
+  background: #ffffff;
+  width: 100%;
+  max-width: 420px;
+  padding: 24px 28px;
+  border-radius: 12px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+  box-sizing: border-box;
+}
+
+/* make form labels consistent with rest of app */
+
+.auth-card .form-section label {
+  font-weight: 500;
+  color: #6d4c41;
+  margin-bottom: 6px;
+}
+
+.auth-card input {
+  width: 100%;
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #e0e0e0;
+  font-size: 14px;
+  box-sizing: border-box;
+}
+
+.auth-card input:focus {
+  outline: none;
+  border-color: #6d4c41;
+  box-shadow: 0 0 4px rgba(109, 76, 65, 0.3);
+}
+
+/* Auth footer = full width, no sidebar margin */
+
+.auth-footer {
+  background: #fffaf5;
+  border-top: 2px solid #e0d4c8;
+  padding: 14px 20px;
+  margin-top: 24px;
+  text-align: center;
+  color: #6d4c41;
+  font-size: 14px;
+}
+
+.auth-footer .footer-content {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  align-items: center;
+}
+
+/* reuse existing footer-link styles if present; otherwise: */
+.auth-footer .footer-links {
+  display: flex;
+  gap: 18px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Make sure Google buttons don’t stretch weirdly on small screens */
+@media (max-width: 480px) {
+  .auth-card {
+    padding: 20px 18px;
+  }
+}

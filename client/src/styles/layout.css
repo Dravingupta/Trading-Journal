@@ -1,0 +1,340 @@
+/* ========== Global Styles ========== */
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  margin: 0;
+  padding: 0;
+  background: #f9f5f0;
+  color: #4a4a4a;
+  overflow-x: hidden;
+}
+
+/* ========== Layout Wrapper ========== */
+.layout {
+  display: flex;
+  min-height: 100vh;
+  height: auto;
+  overflow-y: auto;
+}
+
+/* ========== Sidebar ========== */
+.sidebar {
+  width: 160px;
+  background: linear-gradient(145deg, #6d4c41, #8d6e63);
+  color: white;
+  padding: 10px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100vh;
+  transition: width 0.3s ease;
+  display: flex;
+  flex-direction: column;
+  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.1);
+  z-index: 1000;
+}
+
+.sidebar.collapsed {
+  width: 40px;
+}
+
+.sidebar.collapsed .sidebar-text {
+  display: none;
+}
+
+/* Sidebar header row (Journal + Button) */
+.sidebar-toggle-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 30px;
+}
+
+/* Toggle Button */
+.toggle-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 22px;
+  cursor: pointer;
+  padding: 4px 13px;
+}
+
+.toggle-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  border-radius: 4px;
+}
+
+/* Sidebar Links */
+
+.sidebar-links {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex: 1;               /* 👈 this lets the bottom area stick to bottom */
+}
+
+
+.sidebar-links a {
+  display: flex;
+  align-items: center;
+  color: white;
+  text-decoration: none;
+  font-weight: 500;
+  gap: 10px;
+  padding: 4px 10px;
+  border-radius: 6px;
+  transition: background 0.2s ease;
+}
+
+.sidebar-links a:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding-left: 12px;
+}
+
+/* Make logout stay visible always */
+.sidebar-bottom {
+  position: absolute;
+  bottom: 35px; /* Space from bottom */
+  left: 0;
+  width: 100%;
+  padding: 0 10px;
+  box-sizing: border-box;
+}
+
+/* Logout button styling */
+.sidebar-logout-btn {
+  width: 100%;
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+  transition: 0.2s ease;
+}
+
+.sidebar-logout-btn:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+  padding-left: 14px;
+}
+
+/* Collapsed mode: keep it centered and small */
+.sidebar.collapsed .sidebar-bottom {
+  padding: 0;
+  text-align: center;
+}
+
+.sidebar.collapsed .sidebar-logout-btn {
+  justify-content: center;
+  padding: 8px;
+}
+
+
+
+/* ========== Main Content ========== */
+.main-content {
+  flex: 1;
+  padding: 25px 25px;
+  min-height: 100vh;
+  margin-left: 180px; /* matches sidebar width */
+  transition: margin-left 0.3s ease;
+}
+
+/* When sidebar collapsed (you will toggle this on <body>) */
+body.sidebar-collapsed .main-content {
+  margin-left: 60px;
+}
+
+/* ========== Header ========== */
+
+.container-header{
+     flex: 1;
+  padding: 25px 25px;
+  margin-left: 180px; /* matches sidebar width */
+  transition: margin-left 0.3s ease;
+
+}
+
+body.sidebar-collapsed .container-header {
+  margin-left: 60px;
+}
+
+.header {
+  background: #fff;
+  padding: 15px 20px;
+  border-radius: 10px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+  text-align: center;
+  transition: margin-left 0.3s ease;
+  animation: fadeIn 0.5s ease-in;
+}
+
+body.sidebar-collapsed .footer {
+  margin-left: 60px;
+}
+
+.header h1 {
+  margin: 0;
+  font-size: 26px;
+  color: #6d4c41;
+}
+
+.header-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  border-bottom: 1px solid rgba(0,0,0,0.06);
+  background: #fff;
+}
+
+.header-left { display:flex; flex-direction: column; }
+.header-right { display:flex; align-items:center; gap:8px; }
+
+.header-subtext {
+  margin: 5px 0 0;
+  font-size: 14px;
+  color: #8d6e63;
+}
+
+/* ========== Generic Container ========== */
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* ========== Generic Button ========== */
+.btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  text-decoration: none;
+  padding: 12px 20px;
+  font-weight: bold;
+  font-size: 14px;
+  border-radius: 6px;
+  transition: background 0.3s ease, transform 0.2s ease, box-shadow 0.3s ease;
+  border: none;
+  cursor: pointer;
+  min-width: 100px;
+  height: 42px;
+  box-sizing: border-box;
+}
+
+/* ========== Global Animations ========== */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+/* ========== Responsive ========== */
+@media (max-width: 768px) {
+  .sidebar {
+    width: 60px;
+  }
+
+  .main-content {
+    margin-left: 60px;
+    padding: 20px 16px;
+  }
+
+  /* .header,
+  .footer {
+    margin-left: 60px;
+  } */
+
+  .layout {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  /* Thin sidebar strip on very small screens */
+  .sidebar {
+    width: 25px;
+    padding: 5px auto;
+  }
+
+  /* Shift content so it doesn't sit under the sidebar */
+  .main-content {
+    margin-left: 30px;
+    padding: 15px;
+  }
+
+  /* Header/footer aligned with main content */
+  /* .header,
+  .footer {
+    margin-left: 30px;
+  } */
+
+  body.sidebar-collapsed .container-header {
+    margin-left: 45px;
+    padding: 10px 10px;
+  }
+  body.sidebar-collapsed .footer {
+    margin-left: 45px;
+    padding: 10px 10px;
+  }
+
+  .container-header {
+    flex: 1;
+    padding: 10px 10px;
+    margin-left: 45px; /* matches small sidebar + gap */
+    transition: margin-left 0.3s ease;
+  }
+
+
+  body.sidebar-collapsed .sidebar-links a {
+      padding: 4px 0px;
+
+  }
+  body.sidebar-collapsed .toggle-btn {
+      padding: 4px 3.5px;
+
+  }
+  body.sidebar-collapsed .main-content {
+      margin-left: 45px;
+      padding: 10px;
+
+  }
+}
+/* ===== Mobile Sidebar Overlay ===== */
+.sidebar-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  background: rgba(0,0,0,0.45);
+  backdrop-filter: blur(2px);
+  z-index: 900;
+  transition: opacity 0.3s ease-in-out;
+}
+
+/* Slide-in sidebar animation for mobile */
+@media (max-width: 480px) {
+  .sidebar {
+    transform: translateX(-100%);
+    width: 200px; /* expanded width */
+    transition: transform 0.3s ease-in-out;
+  }
+
+  .sidebar.collapsed {
+    transform: translateX(0);
+    width: 25px;
+  }
+
+  .sidebar:not(.collapsed) {
+    transform: translateX(0);
+  }
+}
+
+
