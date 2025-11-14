@@ -3,7 +3,7 @@ import axios from "axios";
 import { auth } from "../firebase/firebase";
 
 const api = axios.create({
-  baseURL: "http://localhost:1200/api",
+  baseURL: process.env.REACT_APP_API_URL,
 });
 
 api.interceptors.request.use(
