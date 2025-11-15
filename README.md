@@ -40,5 +40,5 @@ A fully authenticated and analytics-powered trading journal built using the **ME
 
 ---
 
-## 📂 Project Structure
+
 
