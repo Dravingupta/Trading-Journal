@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 
 const tradeSchema = new Schema({
     owner: {
-        type: String, // Firebase User UID (string)
+        type: String, 
         required: true
     },
     symbol: {
@@ -38,7 +38,7 @@ const tradeSchema = new Schema({
         max: 10,
         required: true
     },
-}, { timestamps: true }); // timestamps added for better tracking
+}, { timestamps: true }); // timestam
 
 let Trade = mongoose.model("Trade", tradeSchema); // Model name change to PascalCase convention
 
