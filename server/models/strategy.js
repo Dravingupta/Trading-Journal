@@ -4,7 +4,7 @@ const mongoose = require("mongoose");
 const strategySchema = new mongoose.Schema(
   {
     owner: {
-      type: String,          // Firebase UID
+      type: String,         
       required: true,
       index: true,
     },
@@ -17,7 +17,7 @@ const strategySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// One user can't have duplicate strategy names
+
 strategySchema.index({ owner: 1, name: 1 }, { unique: true });
 
 const Strategy = mongoose.model("Strategy", strategySchema);
