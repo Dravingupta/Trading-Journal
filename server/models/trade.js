@@ -38,8 +38,8 @@ const tradeSchema = new Schema({
         max: 10,
         required: true
     },
-}, { timestamps: true }); // timestam
+}, { timestamps: true });
 
-let Trade = mongoose.model("Trade", tradeSchema); // Model name change to PascalCase convention
+let Trade = mongoose.model("Trade", tradeSchema); 
 
 module.exports = Trade;
