@@ -3,7 +3,6 @@ const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
 const tradeSchema = new Schema({
-    // New: User ID to link trade with owner
     owner: {
         type: String, // Firebase User UID (string)
         required: true
