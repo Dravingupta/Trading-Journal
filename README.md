@@ -39,7 +39,8 @@ A fully authenticated and analytics-powered trading journal built using the **ME
 - Token-based route protection
 
 ---
-Thanks for reading
+
+
 
 
 
