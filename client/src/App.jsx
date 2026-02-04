@@ -1,7 +1,7 @@
 // client/src/App.jsx
 import React, { useState, useEffect, createContext, useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
-import { auth, onAuthStateChanged,  } from './firebase/firebase';
+import { auth, onAuthStateChanged, } from './firebase/firebase';
 import './App.css';
 
 // --- Component Imports ---
@@ -13,11 +13,12 @@ import TradeDetail from './pages/TradeDetail.jsx';
 import EditTrade from './pages/EditTrade.jsx';
 import Header from './components/Header.jsx';
 import AnalyticsPage from './pages/Analytics.jsx';
-import Footer from './components/Footer.jsx';   
-import AuthHeader from './components/AuthHeader.jsx';   
-import AuthFooter from './components/AuthFooter.jsx';  
+import Footer from './components/Footer.jsx';
+import AuthHeader from './components/AuthHeader.jsx';
+import AuthFooter from './components/AuthFooter.jsx';
 import LandingPage from "./pages/LandingPage.jsx";
 import LandingFooter from "./components/LandingFooter.jsx";
+import BackendWakeLoader from './components/BackendWakeLoader';
 
 
 // import Sidebar from './components/Sidebar.jsx'; // use later if needed
@@ -30,6 +31,7 @@ const useAuth = () => useContext(AuthContext);
 function App() {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [backendReady, setBackendReady] = useState(false);
 
   // Listen to Firebase auth state
   useEffect(() => {
@@ -55,6 +57,11 @@ function App() {
     );
   }
 
+  // Use the Wake Loader if user is logged in but backend isn't confirmed ready
+  if (user && !backendReady) {
+    return <BackendWakeLoader onFinish={() => setBackendReady(true)} />;
+  }
+
   return (
     <AuthContext.Provider value={authContextValue}>
       <Router>
@@ -62,55 +69,55 @@ function App() {
           {/* Public Routes */}
 
           <Route path="/landing" element={
-            
+
             <>
-        
-      <LandingPage />
-        <LandingFooter />
 
-       </>
-            
-            } />
+              <LandingPage />
+              <LandingFooter />
 
-          
+            </>
+
+          } />
+
+
           <Route
-  path="/login"
-  element={
-    user ? (
-      <Navigate to="/" />
-    ) : (
-      <>
-        <AuthHeader />
-        <LoginPage />
-        <AuthFooter />
-      </>
-    )
-  }
-/>
+            path="/login"
+            element={
+              user ? (
+                <Navigate to="/" />
+              ) : (
+                <>
+                  <AuthHeader />
+                  <LoginPage />
+                  <AuthFooter />
+                </>
+              )
+            }
+          />
 
-<Route
-  path="/signup"
-  element={
-    user ? (
-      <Navigate to="/" />
-    ) : (
-      <>
-        <AuthHeader />
-        <SignupPage />
-        <AuthFooter />
-      </>
-    )
-  }
-/>
+          <Route
+            path="/signup"
+            element={
+              user ? (
+                <Navigate to="/" />
+              ) : (
+                <>
+                  <AuthHeader />
+                  <SignupPage />
+                  <AuthFooter />
+                </>
+              )
+            }
+          />
 
-          
+
 
           {/* Private/Protected Routes */}
           <Route
             path="/"
             element={
               user ? (
-               <Navigate to="/trades" replace />
+                <Navigate to="/trades" replace />
               ) : (
                 <Navigate to="/landing" replace />
               )
@@ -123,7 +130,7 @@ function App() {
                 <>
                   <Header />
                   <AllTrades />
-                    <Footer />
+                  <Footer />
                 </>
               ) : (
                 <Navigate to="/landing" replace />
@@ -138,7 +145,7 @@ function App() {
                 <>
                   <Header />
                   <NewTrade />
-                    <Footer />
+                  <Footer />
                 </>
               ) : (
                 <Navigate to="/login" replace />
@@ -153,7 +160,7 @@ function App() {
                 <>
                   <Header />
                   <TradeDetail />
-                    <Footer />
+                  <Footer />
                 </>
               ) : (
                 <Navigate to="/login" replace />
@@ -168,29 +175,29 @@ function App() {
                 <>
                   <Header />
                   <EditTrade />
-                    <Footer />
+                  <Footer />
                 </>
               ) : (
                 <Navigate to="/login" replace />
               )
             } />
 
-            <Route
-  path="/analytics"
-  element={
-    user ? (
-      <>
-        <Header />
-        <AnalyticsPage />
-        <Footer />
-      </>
-    ) : (
-      <Navigate to="/login" replace />
-    )
-  }
-/>
+          <Route
+            path="/analytics"
+            element={
+              user ? (
+                <>
+                  <Header />
+                  <AnalyticsPage />
+                  <Footer />
+                </>
+              ) : (
+                <Navigate to="/login" replace />
+              )
+            }
+          />
 
-         
+
 
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
