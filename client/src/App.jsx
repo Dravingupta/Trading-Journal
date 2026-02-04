@@ -19,6 +19,7 @@ import AuthFooter from './components/AuthFooter.jsx';
 import LandingPage from "./pages/LandingPage.jsx";
 import LandingFooter from "./components/LandingFooter.jsx";
 import BackendWakeLoader from './components/BackendWakeLoader';
+import GlobalLoader from './components/GlobalLoader';
 
 
 // import Sidebar from './components/Sidebar.jsx'; // use later if needed
@@ -50,11 +51,7 @@ function App() {
   };
 
   if (loading) {
-    return (
-      <div style={{ textAlign: 'center', padding: '50px' }}>
-        Loading Authentication... ⏳
-      </div>
-    );
+    return <GlobalLoader message="Authenticating..." />;
   }
 
   // Use the Wake Loader if user is logged in but backend isn't confirmed ready

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import api from "../api/api";
 import Sidebar from "../components/Sidebar";
+import GlobalLoader from "../components/GlobalLoader";
 import "../App.css";
 
 const formatCurrency = (value) => {
@@ -286,8 +287,10 @@ const AnalyticsPage = () => {
     });
   };
 
-  if (loading)
-    return <div style={{ padding: 20 }}>Loading analytics... ⏳</div>;
+  /* 
+    REMOVED EARLY RETURN: 
+    if (loading) return <div>Loading...</div>; 
+  */
   if (error)
     return (
       <div style={{ color: "red", padding: 20 }}>
@@ -307,354 +310,358 @@ const AnalyticsPage = () => {
           </p>
         </header>
 
-        <div className="container analytics-container">
-          {/* Filters */}
-          <section className="analytics-filters">
-            <div className="filter-row">
-              <div className="filter-group">
-                <span className="filter-label">Date range:</span>
-                <button
-                  type="button"
-                  className={
-                    filters.range === "7"
-                      ? "filter-chip active"
-                      : "filter-chip"
-                  }
-                  onClick={() => handleQuickRange("7")}
-                >
-                  Last 7 days
-                </button>
-                <button
-                  type="button"
-                  className={
-                    filters.range === "30"
-                      ? "filter-chip active"
-                      : "filter-chip"
-                  }
-                  onClick={() => handleQuickRange("30")}
-                >
-                  Last 30 days
-                </button>
-                <button
-                  type="button"
-                  className={
-                    filters.range === "90"
-                      ? "filter-chip active"
-                      : "filter-chip"
-                  }
-                  onClick={() => handleQuickRange("90")}
-                >
-                  Last 90 days
-                </button>
-                <button
-                  type="button"
-                  className={
-                    filters.range === "all"
-                      ? "filter-chip active"
-                      : "filter-chip"
-                  }
-                  onClick={() => handleQuickRange("all")}
-                >
-                  All
-                </button>
-              </div>
-
-              <div className="filter-group">
-                <span className="filter-label">Custom dates:</span>
-                <input
-                  type="date"
-                  value={filters.from}
-                  onChange={(e) =>
-                    handleCustomDateChange("from", e.target.value)
-                  }
-                  className="filter-input"
-                />
-                <span style={{ fontSize: 12, color: "#8d6e63" }}>to</span>
-                <input
-                  type="date"
-                  value={filters.to}
-                  onChange={(e) =>
-                    handleCustomDateChange("to", e.target.value)
-                  }
-                  className="filter-input"
-                />
-                <button
-                  type="button"
-                  className="filter-apply-btn"
-                  onClick={applyCustomFilters}
-                >
-                  Apply
-                </button>
-              </div>
-            </div>
-
-            <div className="filter-row">
-              <div className="filter-group">
-                <span className="filter-label">Strategy:</span>
-                <select
-                  value={filters.strategy}
-                  onChange={(e) =>
-                    fetchAnalytics({ strategy: e.target.value })
-                  }
-                  className="filter-select"
-                >
-                  <option value="all">All strategies</option>
-                  {strategiesList.map((name) => (
-                    <option key={name} value={name}>
-                      {name}
-                    </option>
-                  ))}
-                </select>
-              </div>
-
-              <div className="filter-group">
-                <span className="filter-label">Side:</span>
-                <select
-                  value={filters.side}
-                  onChange={(e) =>
-                    fetchAnalytics({ side: e.target.value })
-                  }
-                  className="filter-select"
-                >
-                  <option value="all">All</option>
-                  <option value="BUY">BUY only</option>
-                  <option value="SELL">SELL only</option>
-                </select>
-              </div>
-
-              <div className="filter-summary">
-                Showing:&nbsp;
-                <strong>
-                  {filters.range === "custom"
-                    ? `${filters.from || "any"} → ${filters.to || "any"}`
-                    : filters.range === "7"
-                    ? "Last 7 days"
-                    : filters.range === "30"
-                    ? "Last 30 days"
-                    : filters.range === "90"
-                    ? "Last 90 days"
-                    : "All time"}
-                </strong>
-                {filters.strategy !== "all" && (
-                  <>
-                    &nbsp;• Strategy: <strong>{filters.strategy}</strong>
-                  </>
-                )}
-                {filters.side !== "all" && (
-                  <>
-                    &nbsp;• Side: <strong>{filters.side}</strong>
-                  </>
-                )}
-              </div>
-            </div>
-          </section>
-
-          {/* If no trades */}
-          {!summary && (
-            <div className="analytics-empty">
-              <p>No trades match the current filters.</p>
-              <p style={{ fontSize: 13, color: "#8d6e63" }}>
-                Try expanding the date range or removing some filters.
-              </p>
-              <Link to="/new" className="btn edit-btn">
-                ➕ Add a new trade
-              </Link>
-            </div>
-          )}
-
-          {summary && (
-            <>
-              {/* Top summary cards */}
-              <section className="analytics-grid">
-                <div className="stat-card">
-                  <span className="stat-title">Net PnL</span>
-                  <span
+        {loading ? (
+          <GlobalLoader fullScreen={false} message="Loading Analytics..." />
+        ) : (
+          <div className="container analytics-container">
+            {/* Filters */}
+            <section className="analytics-filters">
+              <div className="filter-row">
+                <div className="filter-group">
+                  <span className="filter-label">Date range:</span>
+                  <button
+                    type="button"
                     className={
-                      summary.netPnl >= 0
-                        ? "stat-value profit"
-                        : "stat-value loss"
+                      filters.range === "7"
+                        ? "filter-chip active"
+                        : "filter-chip"
                     }
+                    onClick={() => handleQuickRange("7")}
                   >
-                    {formatCurrency(summary.netPnl)}
-                  </span>
-                  <span className="stat-subtext">
-                    Profit: {formatCurrency(summary.totalProfit)} &nbsp; | &nbsp;
-                    Loss: {formatCurrency(summary.totalLoss)}
-                  </span>
-                </div>
-
-                <div className="stat-card">
-                  <span className="stat-title">Win Rate</span>
-                  <span className="stat-value">
-                    {formatPercent(summary.winRate)}
-                  </span>
-                  <span className="stat-subtext">
-                    {summary.winningTrades} wins / {summary.totalTrades} trades
-                  </span>
-                </div>
-
-                <div className="stat-card">
-                  <span className="stat-title">Average R:R</span>
-                  <span className="stat-value">
-                    {summary.avgRMultiple.toFixed(2)} R
-                  </span>
-                  <span className="stat-subtext">
-                    Avg Risk: {formatCurrency(summary.avgRisk)} &nbsp; | &nbsp;
-                    Avg Reward: {formatCurrency(summary.avgReward)}
-                  </span>
-                </div>
-
-                <div className="stat-card">
-                  <span className="stat-title">Average PnL / Trade</span>
-                  <span
+                    Last 7 days
+                  </button>
+                  <button
+                    type="button"
                     className={
-                      summary.avgPnl >= 0
-                        ? "stat-value profit"
-                        : "stat-value loss"
+                      filters.range === "30"
+                        ? "filter-chip active"
+                        : "filter-chip"
                     }
+                    onClick={() => handleQuickRange("30")}
                   >
-                    {formatCurrency(summary.avgPnl)}
-                  </span>
-                  <span className="stat-subtext">
-                    Total Trades: {summary.totalTrades}
-                  </span>
+                    Last 30 days
+                  </button>
+                  <button
+                    type="button"
+                    className={
+                      filters.range === "90"
+                        ? "filter-chip active"
+                        : "filter-chip"
+                    }
+                    onClick={() => handleQuickRange("90")}
+                  >
+                    Last 90 days
+                  </button>
+                  <button
+                    type="button"
+                    className={
+                      filters.range === "all"
+                        ? "filter-chip active"
+                        : "filter-chip"
+                    }
+                    onClick={() => handleQuickRange("all")}
+                  >
+                    All
+                  </button>
                 </div>
-              </section>
 
-              {/* Equity curve chart */}
-              <section className="analytics-section">
-                <h2 className="analytics-section-title">📊 Equity Curve</h2>
-                {equityCurve.length === 0 ? (
-                  <p>No equity data yet.</p>
-                ) : (
-                  <EquityChart data={equityCurve} />
-                )}
-              </section>
+                <div className="filter-group">
+                  <span className="filter-label">Custom dates:</span>
+                  <input
+                    type="date"
+                    value={filters.from}
+                    onChange={(e) =>
+                      handleCustomDateChange("from", e.target.value)
+                    }
+                    className="filter-input"
+                  />
+                  <span style={{ fontSize: 12, color: "#8d6e63" }}>to</span>
+                  <input
+                    type="date"
+                    value={filters.to}
+                    onChange={(e) =>
+                      handleCustomDateChange("to", e.target.value)
+                    }
+                    className="filter-input"
+                  />
+                  <button
+                    type="button"
+                    className="filter-apply-btn"
+                    onClick={applyCustomFilters}
+                  >
+                    Apply
+                  </button>
+                </div>
+              </div>
 
-              {/* Best / Worst trades */}
-              <section className="analytics-section">
-                <h2 className="analytics-section-title">🏅 Best & Worst Trades</h2>
-                <div className="analytics-grid two-cols">
-                  <div className="stat-card trade-highlight">
-                    <span className="stat-title">Best Trade</span>
-                    {summary.bestTrade ? (
-                      <>
-                        <span className="trade-symbol">
-                          {summary.bestTrade.symbol.toUpperCase()}
-                        </span>
-                        <span className="stat-value profit">
-                          {formatCurrency(summary.bestTrade.pnl)}
-                        </span>
-                        <span className="stat-subtext">
-                          {summary.bestTrade.stratagy} •{" "}
-                          {summary.bestTrade.side} •{" "}
-                          {new Date(
-                            summary.bestTrade.date
-                          ).toLocaleDateString("en-IN")}
-                        </span>
-                        <Link
-                          to={`/${summary.bestTrade._id}`}
-                          className="small-link"
-                        >
-                          View trade →
-                        </Link>
-                      </>
-                    ) : (
-                      <p>No trade data</p>
-                    )}
+              <div className="filter-row">
+                <div className="filter-group">
+                  <span className="filter-label">Strategy:</span>
+                  <select
+                    value={filters.strategy}
+                    onChange={(e) =>
+                      fetchAnalytics({ strategy: e.target.value })
+                    }
+                    className="filter-select"
+                  >
+                    <option value="all">All strategies</option>
+                    {strategiesList.map((name) => (
+                      <option key={name} value={name}>
+                        {name}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="filter-group">
+                  <span className="filter-label">Side:</span>
+                  <select
+                    value={filters.side}
+                    onChange={(e) =>
+                      fetchAnalytics({ side: e.target.value })
+                    }
+                    className="filter-select"
+                  >
+                    <option value="all">All</option>
+                    <option value="BUY">BUY only</option>
+                    <option value="SELL">SELL only</option>
+                  </select>
+                </div>
+
+                <div className="filter-summary">
+                  Showing:&nbsp;
+                  <strong>
+                    {filters.range === "custom"
+                      ? `${filters.from || "any"} → ${filters.to || "any"}`
+                      : filters.range === "7"
+                        ? "Last 7 days"
+                        : filters.range === "30"
+                          ? "Last 30 days"
+                          : filters.range === "90"
+                            ? "Last 90 days"
+                            : "All time"}
+                  </strong>
+                  {filters.strategy !== "all" && (
+                    <>
+                      &nbsp;• Strategy: <strong>{filters.strategy}</strong>
+                    </>
+                  )}
+                  {filters.side !== "all" && (
+                    <>
+                      &nbsp;• Side: <strong>{filters.side}</strong>
+                    </>
+                  )}
+                </div>
+              </div>
+            </section>
+
+            {/* If no trades */}
+            {!summary && (
+              <div className="analytics-empty">
+                <p>No trades match the current filters.</p>
+                <p style={{ fontSize: 13, color: "#8d6e63" }}>
+                  Try expanding the date range or removing some filters.
+                </p>
+                <Link to="/new" className="btn edit-btn">
+                  ➕ Add a new trade
+                </Link>
+              </div>
+            )}
+
+            {summary && (
+              <>
+                {/* Top summary cards */}
+                <section className="analytics-grid">
+                  <div className="stat-card">
+                    <span className="stat-title">Net PnL</span>
+                    <span
+                      className={
+                        summary.netPnl >= 0
+                          ? "stat-value profit"
+                          : "stat-value loss"
+                      }
+                    >
+                      {formatCurrency(summary.netPnl)}
+                    </span>
+                    <span className="stat-subtext">
+                      Profit: {formatCurrency(summary.totalProfit)} &nbsp; | &nbsp;
+                      Loss: {formatCurrency(summary.totalLoss)}
+                    </span>
                   </div>
 
-                  <div className="stat-card trade-highlight">
-                    <span className="stat-title">Worst Trade</span>
-                    {summary.worstTrade ? (
-                      <>
-                        <span className="trade-symbol">
-                          {summary.worstTrade.symbol.toUpperCase()}
-                        </span>
-                        <span className="stat-value loss">
-                          {formatCurrency(summary.worstTrade.pnl)}
-                        </span>
-                        <span className="stat-subtext">
-                          {summary.worstTrade.stratagy} •{" "}
-                          {summary.worstTrade.side} •{" "}
-                          {new Date(
-                            summary.worstTrade.date
-                          ).toLocaleDateString("en-IN")}
-                        </span>
-                        <Link
-                          to={`/${summary.worstTrade._id}`}
-                          className="small-link"
-                        >
-                          View trade →
-                        </Link>
-                      </>
-                    ) : (
-                      <p>No trade data</p>
-                    )}
+                  <div className="stat-card">
+                    <span className="stat-title">Win Rate</span>
+                    <span className="stat-value">
+                      {formatPercent(summary.winRate)}
+                    </span>
+                    <span className="stat-subtext">
+                      {summary.winningTrades} wins / {summary.totalTrades} trades
+                    </span>
                   </div>
-                </div>
-              </section>
 
-              {/* Strategy breakdown */}
-              <section className="analytics-section">
-                <h2 className="analytics-section-title">
-                  🎯 Performance by Strategy
-                </h2>
+                  <div className="stat-card">
+                    <span className="stat-title">Average R:R</span>
+                    <span className="stat-value">
+                      {summary.avgRMultiple.toFixed(2)} R
+                    </span>
+                    <span className="stat-subtext">
+                      Avg Risk: {formatCurrency(summary.avgRisk)} &nbsp; | &nbsp;
+                      Avg Reward: {formatCurrency(summary.avgReward)}
+                    </span>
+                  </div>
 
-                {byStrategy.length === 0 ? (
-                  <p style={{ padding: "10px 0" }}>
-                    No strategy data for these filters.
-                  </p>
-                ) : (
-                  <div className="strategy-table-wrapper">
-                    <table className="strategy-table">
-                      <thead>
-                        <tr>
-                          <th>Strategy</th>
-                          <th>Trades</th>
-                          <th>Win Rate</th>
-                          <th>Net PnL</th>
-                          <th>Avg PnL</th>
-                          <th>Profit</th>
-                          <th>Loss</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        {byStrategy.map((s) => (
-                          <tr key={s.stratagy}>
-                            <td>{s.stratagy}</td>
-                            <td>{s.trades}</td>
-                            <td>{formatPercent(s.winRate)}</td>
-                            <td
-                              className={
-                                s.netPnl >= 0 ? "cell-profit" : "cell-loss"
-                              }
-                            >
-                              {formatCurrency(s.netPnl)}
-                            </td>
-                            <td
-                              className={
-                                s.avgPnl >= 0 ? "cell-profit" : "cell-loss"
-                              }
-                            >
-                              {formatCurrency(s.avgPnl)}
-                            </td>
-                            <td className="cell-profit">
-                              {formatCurrency(s.totalProfit)}
-                            </td>
-                            <td className="cell-loss">
-                              {formatCurrency(s.totalLoss)}
-                            </td>
+                  <div className="stat-card">
+                    <span className="stat-title">Average PnL / Trade</span>
+                    <span
+                      className={
+                        summary.avgPnl >= 0
+                          ? "stat-value profit"
+                          : "stat-value loss"
+                      }
+                    >
+                      {formatCurrency(summary.avgPnl)}
+                    </span>
+                    <span className="stat-subtext">
+                      Total Trades: {summary.totalTrades}
+                    </span>
+                  </div>
+                </section>
+
+                {/* Equity curve chart */}
+                <section className="analytics-section">
+                  <h2 className="analytics-section-title">📊 Equity Curve</h2>
+                  {equityCurve.length === 0 ? (
+                    <p>No equity data yet.</p>
+                  ) : (
+                    <EquityChart data={equityCurve} />
+                  )}
+                </section>
+
+                {/* Best / Worst trades */}
+                <section className="analytics-section">
+                  <h2 className="analytics-section-title">🏅 Best & Worst Trades</h2>
+                  <div className="analytics-grid two-cols">
+                    <div className="stat-card trade-highlight">
+                      <span className="stat-title">Best Trade</span>
+                      {summary.bestTrade ? (
+                        <>
+                          <span className="trade-symbol">
+                            {summary.bestTrade.symbol.toUpperCase()}
+                          </span>
+                          <span className="stat-value profit">
+                            {formatCurrency(summary.bestTrade.pnl)}
+                          </span>
+                          <span className="stat-subtext">
+                            {summary.bestTrade.stratagy} •{" "}
+                            {summary.bestTrade.side} •{" "}
+                            {new Date(
+                              summary.bestTrade.date
+                            ).toLocaleDateString("en-IN")}
+                          </span>
+                          <Link
+                            to={`/${summary.bestTrade._id}`}
+                            className="small-link"
+                          >
+                            View trade →
+                          </Link>
+                        </>
+                      ) : (
+                        <p>No trade data</p>
+                      )}
+                    </div>
+
+                    <div className="stat-card trade-highlight">
+                      <span className="stat-title">Worst Trade</span>
+                      {summary.worstTrade ? (
+                        <>
+                          <span className="trade-symbol">
+                            {summary.worstTrade.symbol.toUpperCase()}
+                          </span>
+                          <span className="stat-value loss">
+                            {formatCurrency(summary.worstTrade.pnl)}
+                          </span>
+                          <span className="stat-subtext">
+                            {summary.worstTrade.stratagy} •{" "}
+                            {summary.worstTrade.side} •{" "}
+                            {new Date(
+                              summary.worstTrade.date
+                            ).toLocaleDateString("en-IN")}
+                          </span>
+                          <Link
+                            to={`/${summary.worstTrade._id}`}
+                            className="small-link"
+                          >
+                            View trade →
+                          </Link>
+                        </>
+                      ) : (
+                        <p>No trade data</p>
+                      )}
+                    </div>
+                  </div>
+                </section>
+
+                {/* Strategy breakdown */}
+                <section className="analytics-section">
+                  <h2 className="analytics-section-title">
+                    🎯 Performance by Strategy
+                  </h2>
+
+                  {byStrategy.length === 0 ? (
+                    <p style={{ padding: "10px 0" }}>
+                      No strategy data for these filters.
+                    </p>
+                  ) : (
+                    <div className="strategy-table-wrapper">
+                      <table className="strategy-table">
+                        <thead>
+                          <tr>
+                            <th>Strategy</th>
+                            <th>Trades</th>
+                            <th>Win Rate</th>
+                            <th>Net PnL</th>
+                            <th>Avg PnL</th>
+                            <th>Profit</th>
+                            <th>Loss</th>
                           </tr>
-                        ))}
-                      </tbody>
-                    </table>
-                  </div>
-                )}
-              </section>
-            </>
-          )}
-        </div>
+                        </thead>
+                        <tbody>
+                          {byStrategy.map((s) => (
+                            <tr key={s.stratagy}>
+                              <td>{s.stratagy}</td>
+                              <td>{s.trades}</td>
+                              <td>{formatPercent(s.winRate)}</td>
+                              <td
+                                className={
+                                  s.netPnl >= 0 ? "cell-profit" : "cell-loss"
+                                }
+                              >
+                                {formatCurrency(s.netPnl)}
+                              </td>
+                              <td
+                                className={
+                                  s.avgPnl >= 0 ? "cell-profit" : "cell-loss"
+                                }
+                              >
+                                {formatCurrency(s.avgPnl)}
+                              </td>
+                              <td className="cell-profit">
+                                {formatCurrency(s.totalProfit)}
+                              </td>
+                              <td className="cell-loss">
+                                {formatCurrency(s.totalLoss)}
+                              </td>
+                            </tr>
+                          ))}
+                        </tbody>
+                      </table>
+                    </div>
+                  )}
+                </section>
+              </>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

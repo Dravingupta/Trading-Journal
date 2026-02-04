@@ -1,5 +1,6 @@
 // client/src/pages/EditTrade.jsx
 import React, { useState, useEffect } from 'react';
+import GlobalLoader from "../components/GlobalLoader";
 import { useParams, useNavigate } from 'react-router-dom';
 import api from '../api/api';                   // ✅ use api
 import Sidebar from '../components/Sidebar.jsx';
@@ -113,8 +114,7 @@ const EditTrade = () => {
     } catch (err) {
       console.error('Error updating trade:', err.response?.data || err.message);
       setError(
-        `❌ Error updating trade: ${
-          err.response?.data?.message || err.message
+        `❌ Error updating trade: ${err.response?.data?.message || err.message
         }`
       );
     } finally {
@@ -122,8 +122,8 @@ const EditTrade = () => {
     }
   };
 
-  if (loading || !formData)
-    return <div>Loading trade data for editing... ⏳</div>;
+  /* if (loading || !formData)
+    return <div>Loading trade data for editing... ⏳</div>; */
   if (error)
     return (
       <div style={{ color: 'red', padding: '20px' }}>Error: {error}</div>
@@ -134,207 +134,211 @@ const EditTrade = () => {
       <Sidebar />
       <div className="main-content" id="main">
         <header className="header analytics-header">
-          <h1>✏️ Edit Trade: {formData.symbol.toUpperCase()}</h1>
+          <h1>✏️ Edit Trade: {formData ? formData.symbol.toUpperCase() : '...'}</h1>
           <p className="header-subtext">Update trade details and re-calculate PNL</p>
         </header>
 
-        <div className="container">
-          <div className="trade-form-card">
-            <form onSubmit={handleSubmit}>
-              <div className="form-section">
-                <div className="input-row">
-                  <label htmlFor="side">Side:</label>
-                  <select
-                    id="side"
-                    name="side"
-                    required
-                    value={formData.side}
-                    onChange={handleChange}
-                  >
-                    <option value="" disabled>
-                      Select Side
-                    </option>
-                    <option value="BUY">BUY</option>
-                    <option value="SELL">SELL</option>
-                  </select>
-
-                  <label htmlFor="symbol">Symbol:</label>
-                  <input
-                    type="text"
-                    id="symbol"
-                    name="symbol"
-                    required
-                    value={formData.symbol}
-                    onChange={handleChange}
-                  />
-
-                  {/* Strategy free-text with suggestions */}
-                  <label htmlFor="stratagy">Strategy:</label>
-                  <input
-                    list="strategy-options"
-                    id="stratagy"
-                    name="stratagy"
-                    required
-                    value={formData.stratagy}
-                    onChange={handleChange}
-                  />
-                  <datalist id="strategy-options">
-                    {strategies.map((s) => (
-                      <option key={s._id} value={s.name} />
-                    ))}
-                  </datalist>
-                </div>
-              </div>
-
-              <div className="form-section">
-                <div className="input-row">
-                  <label htmlFor="quantity">Quantity:</label>
-                  <input
-                    type="number"
-                    id="quantity"
-                    name="quantity"
-                    min="1"
-                    step="1"
-                    required
-                    value={formData.quantity}
-                    onChange={handleChange}
-                  />
-
-                  <label htmlFor="price">Entry Price (₹):</label>
-                  <input
-                    type="number"
-                    id="price"
-                    name="price"
-                    step="0.01"
-                    value={formData.price}
-                    onChange={handleChange}
-                  />
-
-                  <label htmlFor="date">Date:</label>
-                  <input
-                    type="date"
-                    id="date"
-                    name="date"
-                    value={formData.date}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-
-              <div className="form-section">
-                <label htmlFor="description">Entry Reason:</label>
-                <textarea
-                  id="description"
-                  name="description"
-                  rows="4"
-                  value={formData.description}
-                  onChange={handleChange}
-                ></textarea>
-              </div>
-
-              <div className="form-section">
-                <div className="input-row">
-                  <label htmlFor="exit">Exit Price (₹):</label>
-                  <input
-                    type="number"
-                    id="exit"
-                    name="exit"
-                    step="0.01"
-                    value={formData.exit}
-                    onChange={handleChange}
-                  />
-
-                  <label htmlFor="exitreason">Exit Reason:</label>
-                  <select
-                    id="exitreason"
-                    name="exitreason"
-                    required
-                    value={formData.exitreason}
-                    onChange={handleChange}
-                  >
-                    <option value="" disabled>
-                      -- Select Exit Reason --
-                    </option>
-                    <option value="Target/Stoploss hit">TG/SL hit</option>
-                    <option value="Psychology problem">Psychology problem</option>
-                    <option value="Trailing Stoploss hit">Trailing SL hit</option>
-                  </select>
-                </div>
-              </div>
-
-              <div className="form-section">
-                <div className="input-row">
-                  <label htmlFor="target">Target (₹):</label>
-                  <input
-                    type="number"
-                    id="target"
-                    name="target"
-                    step="0.01"
-                    value={formData.target}
-                    onChange={handleChange}
-                  />
-
-                  <label htmlFor="stoploss">Stoploss (₹):</label>
-                  <input
-                    type="number"
-                    id="stoploss"
-                    name="stoploss"
-                    step="0.01"
-                    value={formData.stoploss}
-                    onChange={handleChange}
-                  />
-                </div>
-              </div>
-
-              <div className="form-section">
-                <label htmlFor="rating">Satisfactory Rating (1-10):</label>
-                <div className="slider-container">
-                  <input
-                    type="range"
-                    id="rating"
-                    name="rating"
-                    min="0"
-                    max="10"
-                    value={formData.rating}
-                    required
-                    onChange={handleChange}
-                    style={{ paddingRight: 0 }}
-                  />
-                  <span id="rating-value">{formData.rating}</span>
-                </div>
-              </div>
-
-              {/* Strategy chips */}
-              {strategies.length > 0 && (
+        {(loading || !formData) ? (
+          <GlobalLoader fullScreen={false} message="Loading Trade Data..." />
+        ) : (
+          <div className="container">
+            <div className="trade-form-card">
+              <form onSubmit={handleSubmit}>
                 <div className="form-section">
-                  <label>Saved strategies:</label>
-                  <div className="strategy-chip-row">
-                    {strategies.map((s) => (
-                      <span key={s._id} className="strategy-chip">
-                        {s.name}
-                        <button
-                          type="button"
-                          className="strategy-chip-delete"
-                          onClick={() => handleDeleteStrategy(s._id)}
-                          title="Remove strategy from list"
-                        >
-                          ×
-                        </button>
-                      </span>
-                    ))}
+                  <div className="input-row">
+                    <label htmlFor="side">Side:</label>
+                    <select
+                      id="side"
+                      name="side"
+                      required
+                      value={formData.side}
+                      onChange={handleChange}
+                    >
+                      <option value="" disabled>
+                        Select Side
+                      </option>
+                      <option value="BUY">BUY</option>
+                      <option value="SELL">SELL</option>
+                    </select>
+
+                    <label htmlFor="symbol">Symbol:</label>
+                    <input
+                      type="text"
+                      id="symbol"
+                      name="symbol"
+                      required
+                      value={formData.symbol}
+                      onChange={handleChange}
+                    />
+
+                    {/* Strategy free-text with suggestions */}
+                    <label htmlFor="stratagy">Strategy:</label>
+                    <input
+                      list="strategy-options"
+                      id="stratagy"
+                      name="stratagy"
+                      required
+                      value={formData.stratagy}
+                      onChange={handleChange}
+                    />
+                    <datalist id="strategy-options">
+                      {strategies.map((s) => (
+                        <option key={s._id} value={s.name} />
+                      ))}
+                    </datalist>
                   </div>
                 </div>
-              )}
 
-              {error && (
-                <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>
-              )}
-              <button type="submit" className="submit-btn" disabled={saving}>
-                {saving ? 'Updating...' : 'Save Changes'}
-              </button>
-            </form>
+                <div className="form-section">
+                  <div className="input-row">
+                    <label htmlFor="quantity">Quantity:</label>
+                    <input
+                      type="number"
+                      id="quantity"
+                      name="quantity"
+                      min="1"
+                      step="1"
+                      required
+                      value={formData.quantity}
+                      onChange={handleChange}
+                    />
+
+                    <label htmlFor="price">Entry Price (₹):</label>
+                    <input
+                      type="number"
+                      id="price"
+                      name="price"
+                      step="0.01"
+                      value={formData.price}
+                      onChange={handleChange}
+                    />
+
+                    <label htmlFor="date">Date:</label>
+                    <input
+                      type="date"
+                      id="date"
+                      name="date"
+                      value={formData.date}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+
+                <div className="form-section">
+                  <label htmlFor="description">Entry Reason:</label>
+                  <textarea
+                    id="description"
+                    name="description"
+                    rows="4"
+                    value={formData.description}
+                    onChange={handleChange}
+                  ></textarea>
+                </div>
+
+                <div className="form-section">
+                  <div className="input-row">
+                    <label htmlFor="exit">Exit Price (₹):</label>
+                    <input
+                      type="number"
+                      id="exit"
+                      name="exit"
+                      step="0.01"
+                      value={formData.exit}
+                      onChange={handleChange}
+                    />
+
+                    <label htmlFor="exitreason">Exit Reason:</label>
+                    <select
+                      id="exitreason"
+                      name="exitreason"
+                      required
+                      value={formData.exitreason}
+                      onChange={handleChange}
+                    >
+                      <option value="" disabled>
+                        -- Select Exit Reason --
+                      </option>
+                      <option value="Target/Stoploss hit">TG/SL hit</option>
+                      <option value="Psychology problem">Psychology problem</option>
+                      <option value="Trailing Stoploss hit">Trailing SL hit</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="form-section">
+                  <div className="input-row">
+                    <label htmlFor="target">Target (₹):</label>
+                    <input
+                      type="number"
+                      id="target"
+                      name="target"
+                      step="0.01"
+                      value={formData.target}
+                      onChange={handleChange}
+                    />
+
+                    <label htmlFor="stoploss">Stoploss (₹):</label>
+                    <input
+                      type="number"
+                      id="stoploss"
+                      name="stoploss"
+                      step="0.01"
+                      value={formData.stoploss}
+                      onChange={handleChange}
+                    />
+                  </div>
+                </div>
+
+                <div className="form-section">
+                  <label htmlFor="rating">Satisfactory Rating (1-10):</label>
+                  <div className="slider-container">
+                    <input
+                      type="range"
+                      id="rating"
+                      name="rating"
+                      min="0"
+                      max="10"
+                      value={formData.rating}
+                      required
+                      onChange={handleChange}
+                      style={{ paddingRight: 0 }}
+                    />
+                    <span id="rating-value">{formData.rating}</span>
+                  </div>
+                </div>
+
+                {/* Strategy chips */}
+                {strategies.length > 0 && (
+                  <div className="form-section">
+                    <label>Saved strategies:</label>
+                    <div className="strategy-chip-row">
+                      {strategies.map((s) => (
+                        <span key={s._id} className="strategy-chip">
+                          {s.name}
+                          <button
+                            type="button"
+                            className="strategy-chip-delete"
+                            onClick={() => handleDeleteStrategy(s._id)}
+                            title="Remove strategy from list"
+                          >
+                            ×
+                          </button>
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                {error && (
+                  <p style={{ color: 'red', marginTop: '10px' }}>{error}</p>
+                )}
+                <button type="submit" className="submit-btn" disabled={saving}>
+                  {saving ? 'Updating...' : 'Save Changes'}
+                </button>
+              </form>
+            </div>
           </div>
-        </div>
+        )}
       </div>
     </div>
   );
