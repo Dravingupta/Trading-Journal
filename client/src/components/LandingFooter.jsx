@@ -28,14 +28,7 @@ const LandingFooter = () => {
             💼 LinkedIn
           </a>
 
-          <a
-            href="https://github.com/Dravingupta"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="footer-link"
-          >
-            🧑‍💻 GitHub
-          </a>
+
         </div>
       </div>
     </footer>
